@@ -1,3 +1,28 @@
+Snitch specifics
+================
+
+Please see the normal spike instructions below for build instructions and setting up debugging in GDB.
+These are unchanged!
+
+To run a snitch-like setup that is equal to verilator use the following spike command:
+```
+spike \
+-m0x10000000:0x40000,0x80000000:0x80000000 \
+--disable-dtb \
+--hartids=8
+```
+This does the following:
+* `-m0x10000000:0x40000,0x80000000:0x80000000` creates two memory regions, one at `0x10000000` of size `0x40000` that 
+  corresponds to snitch's L1 (see `base.ld` in the `snitch-toolchain`) and one at `0x80000000` of size `0x80000000` that 
+  corresponds to L3/DRAM. This is used as heap memory in our implementation.
+* `--disable-dtb` stops spike from using a default Linux kernel device tree for peripheral memory mapping. We don't need 
+  that right now.
+* `--hartids=8` gives the single core being run the ID 8. This corresponds to the DM core in the default snitch setup
+  (`default.hjson`)
+
+The above command only creates the DM core, no compute cores, but this is also technically possible.
+I have not tested this configuration myself nor added support for it with the custom instructions.
+
 Spike RISC-V ISA Simulator
 ============================
 
