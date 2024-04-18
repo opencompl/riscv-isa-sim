@@ -1,8 +1,11 @@
 Snitch specifics
 ================
 
-Please see the normal spike instructions below for build instructions and setting up debugging in GDB.
-These are unchanged!
+Building spike for snitch is for the most part the same as upstream spike but with default options adjusted. 
+More specifically you'll want to be using 
+`./configure --with-target=riscv32-unknown-elf --with-isa=RV32IMAFD --prefix=$INSTALL_DIR` to make it default to the 
+same ISA and target as snitch. 
+The ISA can worst case also be overwritten using a command line option.
 
 To run a snitch-like setup that is equal to verilator use the following spike command:
 ```
