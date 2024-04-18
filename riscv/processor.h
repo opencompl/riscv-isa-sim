@@ -112,6 +112,13 @@ struct state_t
   virtualized_csr_t_p satp;
   csr_t_p scause;
 
+  // Last set DM source.
+  reg_t dmasrc;
+  // Last set DM destination.
+  reg_t dmadst;
+  // ID that will be given to the next dmcpy[i]. Monotonically increasing.
+  reg_t dmaid = 0;
+
   // When taking a trap into HS-mode, we must access the nonvirtualized HS-mode CSRs directly:
   csr_t_p nonvirtual_stvec;
   csr_t_p nonvirtual_scause;

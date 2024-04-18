@@ -3,7 +3,7 @@
 #define _RISCV_PLATFORM_H
 
 #define DEFAULT_KERNEL_BOOTARGS "console=ttyS0 earlycon"
-#define DEFAULT_RSTVEC     0x00001000
+#define DEFAULT_RSTVEC     DRAM_BASE
 #define CLINT_BASE         0x02000000
 #define CLINT_SIZE         0x000c0000
 #define PLIC_BASE          0x0c000000

@@ -945,6 +945,11 @@ void disassembler_t::add_instructions(const isa_parser_t* isa)
   add_insn(new disasm_insn_t("fence", match_fence, mask_fence, {&iorw}));
   DEFINE_NOARG(fence_i);
 
+  add_insn(new disasm_insn_t("dmsrc", match_dmsrc, mask_dmsrc, {&xrs1, &xrs2}));
+  add_insn(new disasm_insn_t("dmdst", match_dmdst, mask_dmdst, {&xrs1, &xrs2}));
+  add_insn(new disasm_insn_t("dmcpyi", match_dmcpyi, mask_dmcpyi, {&xrd, &xrs1, &p_imm5}));
+  add_insn(new disasm_insn_t("dmstati", match_dmstati, mask_dmcpyi, {&xrd, &xrs1, &p_imm5}));
+
   add_insn(new disasm_insn_t("csrr", match_csrrs, mask_csrrs | mask_rs1, {&xrd, &csr}));
   add_insn(new disasm_insn_t("csrw", match_csrrw, mask_csrrw | mask_rd, {&csr, &xrs1}));
   add_insn(new disasm_insn_t("csrs", match_csrrs, mask_csrrs | mask_rd, {&csr, &xrs1}));
