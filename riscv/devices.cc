@@ -116,3 +116,16 @@ void mem_t::dump(std::ostream& o) {
     }
   }
 }
+
+void barrier_device_t::tick(reg_t) {
+  const std::map<size_t, processor_t *> &map = sim->get_harts();
+  if (std::any_of(map.begin(), map.end(),
+                  [](std::pair<size_t, processor_t *> pair) {
+                    return !pair.second->is_in_barrier();
+                  }))
+    return;
+
+  for (auto [id, proc] : map) {
+    proc->clear_barrier();
+  }
+}

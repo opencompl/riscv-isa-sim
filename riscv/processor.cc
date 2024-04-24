@@ -35,10 +35,9 @@ processor_t::processor_t(const isa_parser_t *isa, const cfg_t *cfg,
   : debug(false), halt_request(HR_NONE), isa(isa), cfg(cfg), sim(sim), id(id), xlen(0),
   histogram_enabled(false), log_commits_enabled(false),
   log_file(log_file), sout_(sout_.rdbuf()), halt_on_reset(halt_on_reset),
-  in_wfi(false), check_triggers_icount(false),
-  impl_table(256, false), extension_enable_table(isa->get_extension_table()),
-  last_pc(1), executions(1), TM(cfg->trigger_count)
-{
+  in_wfi(false), in_barrier(false), check_triggers_icount(false),
+  impl_table(256, false), extension_enable_table(isa->get_extension_table()), last_pc(1),
+  executions(1), TM(cfg->trigger_count) {
   VU.p = this;
   TM.proc = this;
 
@@ -227,10 +226,7 @@ void state_t::reset(processor_t* const proc, reg_t max_isa)
   csrmap[CSR_MSCRATCH] = std::make_shared<basic_csr_t>(proc, CSR_MSCRATCH, 0);
   csrmap[CSR_MTVEC] = mtvec = std::make_shared<tvec_csr_t>(proc, CSR_MTVEC);
   csrmap[CSR_MCAUSE] = mcause = std::make_shared<cause_csr_t>(proc, CSR_MCAUSE);
-  // See
-  // https://github.com/pulp-platform/snitch_cluster/blob/13d1e6b3aaa8e53d5b39858c6ee871b186bf9aa2/hw/snitch/src/snitch.sv#L2523.
-  // We do not yet simulate multiple cores in a cluster.
-  csrmap[CSR_BARRIER] = std::make_shared<const_csr_t>(proc, CSR_BARRIER, 0);
+  csrmap[CSR_BARRIER] = std::make_shared<barrier_csr_t>(proc, CSR_BARRIER);
 
   auto smcntrpmf_enabled = proc->extension_enabled_const(EXT_SMCNTRPMF);
   const reg_t mask = smcntrpmf_enabled ? MHPMEVENT_MINH | MHPMEVENT_SINH |
@@ -636,6 +632,7 @@ void processor_t::reset()
   halt_on_reset = false;
   VU.reset();
   in_wfi = false;
+  in_barrier = false;
 
   if (n_pmp > 0) {
     // For backwards compatibility with software that is unaware of PMP,

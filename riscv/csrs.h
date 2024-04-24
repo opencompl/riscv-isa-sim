@@ -871,4 +871,17 @@ class hvip_csr_t : public basic_csr_t {
 };
 
 typedef std::shared_ptr<hvip_csr_t> hvip_csr_t_p;
+
+// CSR implementing reading from a cluster barrier.
+class barrier_csr_t : public csr_t {
+public:
+  explicit barrier_csr_t(processor_t *const proc, reg_t addr)
+      : csr_t(proc, addr) {}
+
+  reg_t read() const noexcept override;
+
+protected:
+  bool unlogged_write(const reg_t val) noexcept override;
+};
+
 #endif

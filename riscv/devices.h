@@ -86,6 +86,23 @@ class clint_t : public abstract_device_t {
   std::map<size_t, mtimecmp_t> mtimecmp;
 };
 
+/// Device that checks on every tick whether all processors have reached a
+/// cluster barrier and halted. Resumes all of them if true.
+class barrier_device_t : public abstract_device_t {
+  const simif_t* sim;
+public:
+  explicit barrier_device_t(const simif_t* sim) : sim(sim)
+  {}
+
+  bool load(reg_t addr, size_t len, uint8_t *bytes) override { return false; }
+
+  bool store(reg_t addr, size_t len, const uint8_t *bytes) override {
+    return false;
+  }
+
+  void tick(reg_t) override;
+};
+
 #define PLIC_MAX_DEVICES 1024
 
 struct plic_context_t {
