@@ -205,7 +205,8 @@ static inline reg_t execute_insn_logged(processor_t* p, reg_t pc, insn_fetch_t f
 bool processor_t::slow_path()
 {
   return debug || state.single_step != state.STEP_NONE || state.debug_mode ||
-         log_commits_enabled || histogram_enabled || in_wfi || check_triggers_icount;
+         log_commits_enabled || histogram_enabled || in_wfi ||
+         check_triggers_icount || in_barrier;
 }
 
 // fetch/decode/execute loop
@@ -271,6 +272,14 @@ void processor_t::step(size_t n)
               assert(match->timing == triggers::TIMING_BEFORE);
               throw triggers::matched_t((triggers::operation_t)0, 0, match->action, state.v);
             }
+          }
+
+          if (in_barrier) {
+            // Effectively halt the processor, the same way as 'wfi' does.
+            // TODO: Check whether the cycle count increases if a processor is
+            //       within a barrier.
+            n = instret;
+            break;
           }
 
           // debug mode wfis must nop

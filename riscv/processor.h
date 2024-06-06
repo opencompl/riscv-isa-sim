@@ -324,6 +324,12 @@ public:
   void clear_waiting_for_interrupt() { in_wfi = false; };
   bool is_waiting_for_interrupt() { return in_wfi; };
 
+  bool is_in_barrier() const { return in_barrier; }
+
+  void clear_barrier() { in_barrier = false; }
+
+  void enter_barrier() { in_barrier = true; }
+
   void execute_insn_prehook(insn_t insn);
 
 private:
@@ -343,6 +349,7 @@ private:
   std::ostream sout_; // needed for socket command interface -s, also used for -d and -l, but not for --log
   bool halt_on_reset;
   bool in_wfi;
+  bool in_barrier;
   bool check_triggers_icount;
   std::vector<bool> impl_table;
 

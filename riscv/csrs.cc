@@ -1757,3 +1757,15 @@ bool hvip_csr_t::unlogged_write(const reg_t val) noexcept {
   state->mip->write_with_mask(MIP_VSSIP, val); // hvip.VSSIP is an alias of mip.VSSIP
   return basic_csr_t::unlogged_write(val & (MIP_VSEIP | MIP_VSTIP));
 }
+
+reg_t barrier_csr_t::read() const noexcept {
+  // TODO: Supposedly side-effects are not allowed in CSR reads, but the comment
+  //  is from 2018. Check whether this has changed.
+  proc->enter_barrier();
+  return 0;
+}
+
+bool barrier_csr_t::unlogged_write(const reg_t val) noexcept {
+  // TODO: Check whether this even has any semantic.
+  return false;
+}

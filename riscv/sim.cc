@@ -104,6 +104,8 @@ sim_t::sim_t(const cfg_t *cfg, bool halted,
     harts[cfg->hartids[i]] = procs[i];
   }
 
+  devices.push_back(std::make_shared<barrier_device_t>(this));
+
   // When running without using a dtb, skip the fdt-based configuration steps
   if (!dtb_enabled) return;
 
